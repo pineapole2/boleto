@@ -5,6 +5,7 @@ import com.math.boleto.fornecedor.entity.Fornecedor;
 import com.math.boleto.fornecedor.repository.FornecedorRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -38,16 +39,40 @@ public class FornecedorService {
                 .toList();
     }
 
-    public FornecedorResponse findById(Long id){
-        Fornecedor fornecedor = findFornecedorById(id);
-        return toResponse(fornecedor);
+    public FornecedorResponse findById(Long id) {
+        return toResponse(findFornecedorById(id));
     }
+
+    public String gerarCodigoBarras(Long id) {
+        Fornecedor f = findFornecedorById(id);
+
+        if (f.getCodigoBarras() == null) {
+            throw new IllegalStateException("Boleto não possui código de barras");
+        }
+
+        return f.getCodigoBarras();
+    }
+
+    // ===== privados =====
 
     private Fornecedor findFornecedorById(Long id) {
         return fornecedorRepository.findById(id)
-                .orElseThrow(() ->
-                        new EntityNotFoundException("Fornecedor não encontrado")
-                );
+                .orElseThrow(() -> new EntityNotFoundException("Fornecedor não encontrado"));
+    }
+
+    private FornecedorResponse toResponse(Fornecedor f) {
+        return FornecedorResponse.builder()
+                .id(f.getId())
+                .fornecedor(f.getFornecedor())
+                .nf(f.getNf())
+                .dataEmissao(f.getDataEmissao())
+                .vencimento(f.getVencimento())
+                .valor(f.getValor())
+                .parcelas(f.getParcelas())
+                .pago(f.isPago())
+                .obs(f.getObs())
+                .linhaDigitavel(f.getLinhaDigitavel())
+                .build();
     }
 
     private boolean matchesFilters(
@@ -95,18 +120,5 @@ public class FornecedorService {
 
         return ok;
     }
-
-    private FornecedorResponse toResponse(Fornecedor f) {
-        return FornecedorResponse.builder()
-                .id(f.getId())
-                .fornecedor(f.getFornecedor())
-                .nf(f.getNf())
-                .dataEmissao(f.getDataEmissao())
-                .vencimento(f.getVencimento())
-                .valor(f.getValor())
-                .parcelas(f.getParcelas())
-                .pago(f.isPago())
-                .obs(f.getObs())
-                .build();
-    }
 }
+

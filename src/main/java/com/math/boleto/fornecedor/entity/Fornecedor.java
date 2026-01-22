@@ -2,6 +2,7 @@ package com.math.boleto.fornecedor.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -26,4 +27,10 @@ public class Fornecedor {
     private String parcelas;
     private boolean pago;
     private String obs;
+    
+    @Column(length = 47)
+    private String linhaDigitavel;
+
+    @Column(length = 44)
+    private String codigoBarras;
 }

@@ -5,12 +5,15 @@ import com.math.boleto.fornecedor.service.FornecedorService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.List;
 
 @RestController
 @RequestMapping("/fornecedores")
+@CrossOrigin
 public class FornecedorController {
 
     private final FornecedorService fornecedorService;
@@ -27,25 +30,42 @@ public class FornecedorController {
             @RequestParam(required = false) String parcelas,
             @RequestParam(required = false) String obs,
             @RequestParam(required = false) Boolean pago,
-
             @RequestParam(required = false)
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate vencimentoDe,
-
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate vencimentoDe,
             @RequestParam(required = false)
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate vencimentoAte
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate vencimentoAte
     ) {
         return ResponseEntity.ok(
                 fornecedorService.findWithFilters(
-                        fornecedor, nf, valor, parcelas, obs, pago,
-                        vencimentoDe, vencimentoAte
+                        fornecedor,
+                        nf,
+                        valor,
+                        parcelas,
+                        obs,
+                        pago,
+                        vencimentoDe,
+                        vencimentoAte
                 )
         );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FornecedorResponse> findById(@PathVariable Long id){
-        return ResponseEntity
-                .ok(fornecedorService.findById(id));
+    public ResponseEntity<FornecedorResponse> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(fornecedorService.findById(id));
     }
 
+    @GetMapping("/{id}/pagar")
+    public ResponseEntity<Map<String, String>> pagar(@PathVariable Long id) {
+        return ResponseEntity.ok(
+                Map.of(
+                        "linhaDigitavel",
+                        fornecedorService.findById(id).getLinhaDigitavel(),
+                        "codigoBarras",
+                        fornecedorService.gerarCodigoBarras(id)
+                )
+        );
+    }
 }
+

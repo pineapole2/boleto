@@ -1,6 +1,7 @@
 package com.math.boleto.fornecedor.dto.response;
 
 import lombok.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -20,4 +21,6 @@ public class FornecedorResponse {
     private String parcelas;
     private boolean pago;
     private String obs;
+
+    private String linhaDigitavel;
 }

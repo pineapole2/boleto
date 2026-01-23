@@ -28,9 +28,9 @@ public class Fornecedor {
     private boolean pago;
     private String obs;
     
-    @Column(length = 47)
+    @Column(length = 60)
     private String linhaDigitavel;
 
-    @Column(length = 44)
+    @Column(length = 60)
     private String codigoBarras;
 }
